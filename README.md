@@ -2,6 +2,9 @@
 
 This project is a full-stack application that uses BERT (Bidirectional Encoder Representations from Transformers) to analyze text and generate embeddings. It consists of a Flask backend and a React frontend.
 
+
+ ![Image Alt](https://github.com/Umohmarvelous/Transfomer-based-ML-model/blob/56799c0b00bc052635b3f577cab7551419388578/tranformer-ML-model.png)
+
 ## Features
 
 - Text analysis using BERT model
