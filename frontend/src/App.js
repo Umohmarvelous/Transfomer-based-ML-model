@@ -170,6 +170,150 @@ function App() {
         setActiveTab(newValue);
     };
 
+    const AnalysisResults = ({ results }) => {
+        if (!results) return null;
+
+        const { embeddings, statistics } = results;
+
+        // Calculate additional statistics
+        const embeddingArray = embeddings[0];
+        const min = Math.min(...embeddingArray);
+        const max = Math.max(...embeddingArray);
+        const range = max - min;
+        const variance = statistics.std.reduce((acc, val) => acc + val * val, 0) / statistics.std.length;
+        const median = embeddingArray.sort((a, b) => a - b)[Math.floor(embeddingArray.length / 2)];
+        const q1 = embeddingArray.sort((a, b) => a - b)[Math.floor(embeddingArray.length * 0.25)];
+        const q3 = embeddingArray.sort((a, b) => a - b)[Math.floor(embeddingArray.length * 0.75)];
+        const iqr = q3 - q1;
+
+        return (
+            <Box sx={{ mt: 4 }}>
+                <Typography variant="h5" gutterBottom>
+                    Analysis Results
+                </Typography>
+
+                <Grid container spacing={3}>
+                    {/* Statistics Cards */}
+                    <Grid item xs={12} md={6}>
+                        <Card elevation={3}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Statistical Summary
+                                </Typography>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Mean Value
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {statistics.mean[0].toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Standard Deviation
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {statistics.std[0].toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Minimum
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {min.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Maximum
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {max.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Range
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {range.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Variance
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {variance.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Median
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {median.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            IQR
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {iqr.toFixed(4)}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    {/* Visualization */}
+                    <Grid item xs={12} md={6}>
+                        <Card elevation={3}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Embedding Visualization
+                                </Typography>
+                                <Box sx={{ height: 300 }}>
+                                    <Line data={chartData} options={chartOptions} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    {/* Raw Embeddings */}
+                    <Grid item xs={12}>
+                        <Card elevation={3}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Raw Embeddings
+                                </Typography>
+                                <Box sx={{ 
+                                    maxHeight: 200, 
+                                    overflow: 'auto',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                                    p: 2,
+                                    borderRadius: 1
+                                }}>
+                                    <Typography variant="body2" component="pre" sx={{ 
+                                        fontFamily: 'monospace',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-all'
+                                    }}>
+                                        {JSON.stringify(embeddings[0], null, 2)}
+                                    </Typography>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+            </Box>
+        );
+    };
+
     return (
         <Container maxWidth="lg">
             <Box sx={{ my: 4 }}>
@@ -279,29 +423,7 @@ function App() {
                             </Card>
 
                             {results && (
-                                <Zoom in={true} timeout={500}>
-                                    <Card elevation={3} sx={{ borderRadius: 2 }}>
-                                        <CardContent>
-                                            <Typography
-                                                variant="h5"
-                                                gutterBottom
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                    color: '#1976d2',
-                                                    mb: 3,
-                                                }}
-                                            >
-                                                Analysis Results
-                                            </Typography>
-                                            <Box sx={{ height: 500, position: 'relative' }}>
-                                                <Line
-                                                    data={chartData}
-                                                    options={chartOptions}
-                                                />
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Zoom>
+                                <AnalysisResults results={results} />
                             )}
                         </Box>
                     </Fade>
