@@ -8,17 +8,42 @@ import {
     Button,
     Grid,
     CircularProgress,
+    Alert,
+    Paper,
     List,
     ListItem,
     ListItemText,
     Divider,
-    useTheme,
 } from '@mui/material';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler,
+} from 'chart.js';
 import axios from 'axios';
 
+// Register ChartJS components
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
+
 const TimeSeriesAnalysis = () => {
-    const theme = useTheme();
     const [inputData, setInputData] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -29,6 +54,7 @@ const TimeSeriesAnalysis = () => {
             setLoading(true);
             setError('');
 
+            // Parse the input data
             const parsedData = JSON.parse(inputData);
 
             const response = await axios.post('http://localhost:5000/api/analyze-timeseries', {
@@ -52,35 +78,23 @@ const TimeSeriesAnalysis = () => {
                 {
                     label: 'Delay Impact',
                     data: analysis.bottlenecks.map(b => b.impact),
-                    backgroundColor: 'rgba(147, 112, 219, 0.5)', // Purple
-                    borderColor: 'rgb(147, 112, 219)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
                 }
             ]
         };
 
         const options = {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 title: {
                     display: true,
-                    text: 'Bottleneck Impact Analysis',
-                    font: {
-                        size: 16,
-                        weight: 'bold',
-                        color: theme.palette.primary.main
-                    },
-                    padding: 20
+                    text: 'Bottleneck Impact Analysis'
                 },
                 legend: {
-                    labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        }
-                    }
+                    display: false
                 }
             },
             scales: {
@@ -88,14 +102,10 @@ const TimeSeriesAnalysis = () => {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Impact Score',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        }
+                        text: 'Impact Score'
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)'
+                        color: 'rgba(0,0,0,0.1)'
                     }
                 },
                 x: {
@@ -103,236 +113,169 @@ const TimeSeriesAnalysis = () => {
                         display: false
                     }
                 }
-            },
-            animation: {
-                duration: 2000,
-                easing: 'easeInOutQuart'
             }
         };
 
         return (
             <Box sx={{ height: 300, mt: 2 }}>
-                <Line data={data} options={options} />
+                <Bar data={data} options={options} />
             </Box>
         );
     };
 
     return (
-        <Box sx={{
-            background: 'linear-gradient(145deg, #f5f7fa 0%, #e4e8eb 100%)',
-            borderRadius: 2,
-            p: 3
-        }}>
-            <Typography
-                variant="h5"
-                gutterBottom
-                sx={{
-                    color: theme.palette.primary.main,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    mb: 4
-                }}
-            >
+        <Box sx={{ p: 3 }}>
+            <Typography variant="h4" gutterBottom sx={{
+                color: '#2c3e50',
+                fontWeight: 'bold',
+                mb: 4,
+                textAlign: 'center',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+            }}>
                 Time Series Analysis
             </Typography>
 
-            <Card
-                elevation={3}
-                sx={{
-                    mb: 3,
-                    borderRadius: 2,
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)'
-                }}
-            >
-                <CardContent>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={6}
-                        variant="outlined"
-                        label="Enter time series data (JSON format)"
-                        value={inputData}
-                        onChange={(e) => setInputData(e.target.value)}
-                        error={!!error}
-                        helperText={error}
-                        sx={{
-                            mb: 2,
-                            '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
-                                '&:hover fieldset': {
-                                    borderColor: theme.palette.primary.main,
-                                },
-                            },
-                        }}
-                    />
-                    <Button
-                        variant="contained"
-                        onClick={handleAnalyze}
-                        disabled={loading}
-                        fullWidth
-                        sx={{
-                            py: 1.5,
-                            borderRadius: 2,
-                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                            boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                            '&:hover': {
-                                background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
-                            }
-                        }}
-                    >
-                        {loading ? <CircularProgress size={24} /> : 'Analyze Time Series'}
-                    </Button>
-                </CardContent>
-            </Card>
-
-            {analysis && (
-                <Grid container spacing={3}>
-                    {/* Bottleneck Analysis */}
-                    <Grid item xs={12} md={6}>
-                        <Card
-                            elevation={3}
-                            sx={{
-                                borderRadius: 2,
-                                background: 'rgba(255, 255, 255, 0.9)',
-                                backdropFilter: 'blur(10px)'
-                            }}
-                        >
-                            <CardContent>
-                                <Typography
-                                    variant="h6"
-                                    gutterBottom
-                                    sx={{
-                                        color: theme.palette.primary.main,
-                                        fontWeight: 'bold'
-                                    }}
-                                >
-                                    Bottleneck Analysis
-                                </Typography>
-                                {renderBottleneckGraph()}
-                                <List>
-                                    {analysis.bottlenecks.map((bottleneck, index) => (
-                                        <React.Fragment key={index}>
-                                            <ListItem
-                                                sx={{
-                                                    background: 'linear-gradient(45deg, #f3f4f6 30%, #e5e7eb 90%)',
-                                                    borderRadius: 1,
-                                                    mb: 1
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    primary={
-                                                        <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                                                            {bottleneck.step}
-                                                        </Typography>
-                                                    }
-                                                    secondary={
-                                                        <Typography sx={{ color: theme.palette.text.secondary }}>
-                                                            Impact Score: {bottleneck.impact.toFixed(2)}
-                                                        </Typography>
-                                                    }
-                                                />
-                                            </ListItem>
-                                        </React.Fragment>
-                                    ))}
-                                </List>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Recommendations */}
-                    <Grid item xs={12} md={6}>
-                        <Card
-                            elevation={3}
-                            sx={{
-                                borderRadius: 2,
-                                background: 'rgba(255, 255, 255, 0.9)',
-                                backdropFilter: 'blur(10px)'
-                            }}
-                        >
-                            <CardContent>
-                                <Typography
-                                    variant="h6"
-                                    gutterBottom
-                                    sx={{
-                                        color: theme.palette.primary.main,
-                                        fontWeight: 'bold'
-                                    }}
-                                >
-                                    Recommendations
-                                </Typography>
-                                <List>
-                                    {analysis.recommendations.map((rec, index) => (
-                                        <ListItem
-                                            key={index}
-                                            sx={{
-                                                background: 'linear-gradient(45deg, #f3f4f6 30%, #e5e7eb 90%)',
-                                                borderRadius: 1,
-                                                mb: 1
-                                            }}
-                                        >
-                                            <ListItemText
-                                                primary={
-                                                    <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                                                        {rec.title}
-                                                    </Typography>
-                                                }
-                                                secondary={
-                                                    <Typography sx={{ color: theme.palette.text.secondary }}>
-                                                        {rec.description}
-                                                    </Typography>
-                                                }
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Anomaly Detection */}
-                    {analysis.anomalies && analysis.anomalies.length > 0 && (
-                        <Grid item xs={12}>
-                            <Card
-                                elevation={3}
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Card elevation={3} sx={{
+                        borderRadius: 3,
+                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+                        border: '1px solid rgba(0,0,0,0.1)'
+                    }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom sx={{
+                                color: '#34495e',
+                                fontWeight: 'medium',
+                                mb: 2
+                            }}>
+                                Input Data
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={6}
+                                variant="outlined"
+                                value={inputData}
+                                onChange={(e) => setInputData(e.target.value)}
+                                placeholder="Enter time series data in JSON format..."
+                                error={!!error}
+                                helperText={error}
                                 sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: 2,
+                                        backgroundColor: 'rgba(255,255,255,0.9)',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(255,255,255,1)',
+                                        },
+                                    },
+                                }}
+                            />
+                            <Button
+                                variant="contained"
+                                onClick={handleAnalyze}
+                                disabled={loading}
+                                sx={{
+                                    mt: 2,
+                                    py: 1.5,
                                     borderRadius: 2,
-                                    background: 'rgba(255, 255, 255, 0.9)',
-                                    backdropFilter: 'blur(10px)'
+                                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
+                                    },
                                 }}
                             >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Data'}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {analysis && (
+                    <>
+                        <Grid item xs={12} md={6}>
+                            <Card elevation={3} sx={{
+                                borderRadius: 3,
+                                background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+                                height: '100%'
+                            }}>
                                 <CardContent>
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                        sx={{
-                                            color: theme.palette.error.main,
-                                            fontWeight: 'bold'
-                                        }}
-                                    >
-                                        Detected Anomalies
+                                    <Typography variant="h6" gutterBottom sx={{
+                                        color: '#34495e',
+                                        fontWeight: 'medium',
+                                        mb: 2
+                                    }}>
+                                        Bottleneck Analysis
+                                    </Typography>
+                                    <Box sx={{ height: 300 }}>
+                                        <Bar
+                                            data={{
+                                                labels: analysis.bottlenecks.map(b => b.step),
+                                                datasets: [{
+                                                    label: 'Impact Score',
+                                                    data: analysis.bottlenecks.map(b => b.impact),
+                                                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                                    borderWidth: 1,
+                                                }]
+                                            }}
+                                            options={{
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: {
+                                                        display: false
+                                                    }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        grid: {
+                                                            color: 'rgba(0,0,0,0.1)'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        grid: {
+                                                            display: false
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <Card elevation={3} sx={{
+                                borderRadius: 3,
+                                background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+                                height: '100%'
+                            }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom sx={{
+                                        color: '#34495e',
+                                        fontWeight: 'medium',
+                                        mb: 2
+                                    }}>
+                                        Anomalies Detected
                                     </Typography>
                                     <List>
                                         {analysis.anomalies.map((anomaly, index) => (
-                                            <ListItem
-                                                key={index}
-                                                sx={{
-                                                    background: 'linear-gradient(45deg, #fee2e2 30%, #fecaca 90%)',
-                                                    borderRadius: 1,
-                                                    mb: 1
-                                                }}
-                                            >
+                                            <ListItem key={index} sx={{
+                                                mb: 1,
+                                                borderRadius: 2,
+                                                backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                                                border: '1px solid rgba(255, 193, 7, 0.3)'
+                                            }}>
                                                 <ListItemText
-                                                    primary={
-                                                        <Typography sx={{ fontWeight: 'bold', color: theme.palette.error.main }}>
-                                                            {anomaly.step}
-                                                        </Typography>
-                                                    }
-                                                    secondary={
-                                                        <Typography sx={{ color: theme.palette.error.dark }}>
-                                                            {anomaly.description}
-                                                        </Typography>
-                                                    }
+                                                    primary={anomaly.step}
+                                                    secondary={anomaly.description}
+                                                    primaryTypographyProps={{
+                                                        color: '#d32f2f',
+                                                        fontWeight: 'medium'
+                                                    }}
                                                 />
                                             </ListItem>
                                         ))}
@@ -340,9 +283,50 @@ const TimeSeriesAnalysis = () => {
                                 </CardContent>
                             </Card>
                         </Grid>
-                    )}
-                </Grid>
-            )}
+
+                        <Grid item xs={12}>
+                            <Card elevation={3} sx={{
+                                borderRadius: 3,
+                                background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'
+                            }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom sx={{
+                                        color: '#34495e',
+                                        fontWeight: 'medium',
+                                        mb: 2
+                                    }}>
+                                        Recommendations
+                                    </Typography>
+                                    <Grid container spacing={2}>
+                                        {analysis.recommendations.map((rec, index) => (
+                                            <Grid item xs={12} md={4} key={index}>
+                                                <Card sx={{
+                                                    borderRadius: 2,
+                                                    background: 'linear-gradient(145deg, #e3f2fd 0%, #bbdefb 100%)',
+                                                    height: '100%'
+                                                }}>
+                                                    <CardContent>
+                                                        <Typography variant="subtitle1" sx={{
+                                                            color: '#1565c0',
+                                                            fontWeight: 'bold',
+                                                            mb: 1
+                                                        }}>
+                                                            {rec.title}
+                                                        </Typography>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            {rec.description}
+                                                        </Typography>
+                                                    </CardContent>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </>
+                )}
+            </Grid>
         </Box>
     );
 };
