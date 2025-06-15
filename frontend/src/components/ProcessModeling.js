@@ -11,7 +11,19 @@ import {
   Tooltip,
   LinearProgress,
   Snackbar,
-  Alert
+  Alert,
+  Card,
+  CardContent,
+  Grid,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -70,6 +82,10 @@ const ProcessModelingContent = () => {
   const [error, setError] = useState(null);
   const [editingStep, setEditingStep] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [newStep, setNewStep] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentStep, setCurrentStep] = useState(null);
+  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     fetchProcessModel();
