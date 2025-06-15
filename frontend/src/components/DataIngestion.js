@@ -20,6 +20,9 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
+// API URL from environment variable
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 // Custom transition component for error messages
 function SlideTransition(props) {
     return <Slide {...props} direction="up" />;
@@ -106,7 +109,7 @@ const DataIngestion = () => {
         formData.append('preprocessing', JSON.stringify(preprocessingSteps));
 
         try {
-            const response = await axios.post('http://localhost:5000/api/ingest-data', formData, {
+            const response = await axios.post(`${API_URL}/api/ingest-data`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

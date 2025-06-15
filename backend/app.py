@@ -13,17 +13,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 import requests
 from requests.exceptions import ConnectionError
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 # Configure CORS to allow requests from any localhost port
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003"]}})
+CORS(app, resources={r"/api/*": {"origins": [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003",
+    os.getenv('FRONTEND_URL', 'http://localhost:3000')
+]}})
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize the model and tokenizer with error handling
-MODEL_NAME = "bert-base-uncased"
+MODEL_NAME = os.getenv('MODEL_NAME', 'bert-base-uncased')
 tokenizer = None
 model = None
 
@@ -46,14 +56,14 @@ def initialize_model():
         model = None
 
 # Configure upload folder
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.getenv('UPLOAD_FOLDER', 'uploads'))
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))  # 16MB max file size
 
 # Allowed file extensions
-ALLOWED_EXTENSIONS = {'csv', 'json', 'xls', 'xlsx'}
+ALLOWED_EXTENSIONS = set(os.getenv('ALLOWED_EXTENSIONS', 'csv,json,xls,xlsx').split(','))
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
