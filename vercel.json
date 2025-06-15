@@ -5,7 +5,9 @@
             "src": "backend/app.py",
             "use": "@vercel/python",
             "config": {
-                "runtime": "python3.9"
+                "runtime": "python3.9",
+                "buildCommand": "pip install -r backend/requirements.txt",
+                "installCommand": "pip install --upgrade pip setuptools wheel"
             }
         },
         {
