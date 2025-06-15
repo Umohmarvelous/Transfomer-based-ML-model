@@ -12,21 +12,8 @@ import {
   LinearProgress,
   Snackbar,
   Alert,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions
 } from '@mui/material';
 import {
-  Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
   Save as SaveIcon
@@ -80,12 +67,7 @@ const ProcessModelingContent = () => {
   const [steps, setSteps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingStep, setEditingStep] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  const [newStep, setNewStep] = useState('');
-  const [openDialog, setOpenDialog] = useState(false);
-  const [currentStep, setCurrentStep] = useState(null);
-  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     fetchProcessModel();
@@ -126,7 +108,10 @@ const ProcessModelingContent = () => {
 
   const handleEdit = (id) => {
     const step = steps.find(s => s.id === id);
-    setEditingStep({ id, text: step.text });
+    if (step) {
+      // Implement edit functionality here
+      showSnackbar('Edit functionality coming soon', 'info');
+    }
   };
 
   const handleSave = async () => {
