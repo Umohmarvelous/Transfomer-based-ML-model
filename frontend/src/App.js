@@ -31,6 +31,8 @@ import {
 import axios from 'axios';
 import ProcessModeling from './components/ProcessModeling';
 import DataIngestion from './components/DataIngestion';
+import TimeSeriesAnalysis from './components/TimeSeriesAnalysis';
+import { useTheme } from '@mui/material/styles';
 
 ChartJS.register(
     CategoryScale,
@@ -44,6 +46,7 @@ ChartJS.register(
 );
 
 function App() {
+    const theme = useTheme();
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
@@ -171,6 +174,7 @@ function App() {
     };
 
     const AnalysisResults = ({ results }) => {
+        const theme = useTheme();
         if (!results) return null;
 
         const { embeddings, statistics } = results;
@@ -188,24 +192,53 @@ function App() {
 
         return (
             <Box sx={{ mt: 4 }}>
-                <Typography variant="h5" gutterBottom>
+                <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        mb: 4
+                    }}
+                >
                     Analysis Results
                 </Typography>
 
                 <Grid container spacing={3}>
                     {/* Statistics Cards */}
                     <Grid item xs={12} md={6}>
-                        <Card elevation={3}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{
+                                        color: theme.palette.primary.main,
+                                        fontWeight: 'bold'
+                                    }}
+                                >
                                     Statistical Summary
                                 </Typography>
-                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(2, 1fr)',
+                                    gap: 2,
+                                    '& > div': {
+                                        background: 'linear-gradient(45deg, #f3f4f6 30%, #e5e7eb 90%)',
+                                        borderRadius: 1,
+                                        p: 2
+                                    }
+                                }}>
                                     <Box>
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Mean Value
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {statistics.mean[0].toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -213,7 +246,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Standard Deviation
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {statistics.std[0].toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -221,7 +254,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Minimum
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {min.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -229,7 +262,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Maximum
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {max.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -237,7 +270,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Range
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {range.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -245,7 +278,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Variance
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {variance.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -253,7 +286,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             Median
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {median.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -261,7 +294,7 @@ function App() {
                                         <Typography variant="subtitle2" color="text.secondary">
                                             IQR
                                         </Typography>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                             {iqr.toFixed(4)}
                                         </Typography>
                                     </Box>
@@ -272,9 +305,20 @@ function App() {
 
                     {/* Visualization */}
                     <Grid item xs={12} md={6}>
-                        <Card elevation={3}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{
+                                        color: theme.palette.primary.main,
+                                        fontWeight: 'bold'
+                                    }}
+                                >
                                     Embedding Visualization
                                 </Typography>
                                 <Box sx={{ height: 300 }}>
@@ -286,22 +330,34 @@ function App() {
 
                     {/* Raw Embeddings */}
                     <Grid item xs={12}>
-                        <Card elevation={3}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{
+                                        color: theme.palette.primary.main,
+                                        fontWeight: 'bold'
+                                    }}
+                                >
                                     Raw Embeddings
                                 </Typography>
-                                <Box sx={{ 
-                                    maxHeight: 200, 
+                                <Box sx={{
+                                    maxHeight: 200,
                                     overflow: 'auto',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                                    background: 'linear-gradient(45deg, #f3f4f6 30%, #e5e7eb 90%)',
                                     p: 2,
                                     borderRadius: 1
                                 }}>
-                                    <Typography variant="body2" component="pre" sx={{ 
+                                    <Typography variant="body2" component="pre" sx={{
                                         fontFamily: 'monospace',
                                         whiteSpace: 'pre-wrap',
-                                        wordBreak: 'break-all'
+                                        wordBreak: 'break-all',
+                                        color: theme.palette.text.primary
                                     }}>
                                         {JSON.stringify(embeddings[0], null, 2)}
                                     </Typography>
@@ -315,8 +371,22 @@ function App() {
     };
 
     return (
-        <Container maxWidth="lg">
-            <Box sx={{ my: 4 }}>
+        <Container maxWidth="xxl" maxHeight="xxl">
+            <Box
+                sx={{
+                    // my: 4,
+                    // background: 'linear-gradient(145deg, #f5f7fa 0%, #e4e8eb 100%)',
+                    // background: 'red',
+                    
+                    // height: 
+                    // borderRadius: 4,
+                    px: 8, 
+                    // p: 4,
+                    // mt: 7
+                    // boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+                    border: '2px solid red'
+
+                }}>
                 <Fade in={true} timeout={1000}>
                     <Typography
                         variant="h3"
@@ -325,38 +395,61 @@ function App() {
                         align="center"
                         sx={{
                             fontWeight: 'bold',
-                            color: '#1976d2',
+                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
                             textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
                             mb: 4,
                         }}
                     >
-                        Supply Chain Analysis Platform
+                        {/* Supply Chain Analysis Platform */}
                     </Typography>
                 </Fade>
 
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+                <Box sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    mb: 3,
+                    '& .MuiTabs-root': {
+                        minHeight: 60
+                    },
+                    '& .MuiTab-root': {
+                        fontSize: '1.1rem',
+                        fontWeight: 'medium',
+                        textTransform: 'none',
+                        minWidth: 200,
+                        color: theme.palette.text.secondary,
+                        '&.Mui-selected': {
+                            color: theme.palette.primary.main,
+                            fontWeight: 'bold'
+                        }
+                    }
+                }}>
                     <Tabs
                         value={activeTab}
                         onChange={handleTabChange}
                         centered
-                        sx={{
-                            '& .MuiTab-root': {
-                                fontSize: '1.1rem',
-                                fontWeight: 'medium',
-                                textTransform: 'none',
-                                minWidth: 200,
-                            },
+                        TabIndicatorProps={{
+                            style: {
+                                backgroundColor: theme.palette.primary.main,
+                                height: 3
+                            }
                         }}
                     >
                         <Tab label="Data Ingestion" />
                         <Tab label="Text Analysis" />
                         <Tab label="Process Modeling" />
+                        <Tab label="Time Series Analysis" />
                     </Tabs>
                 </Box>
 
                 {activeTab === 0 && (
                     <Fade in={true} timeout={500}>
-                        <Card elevation={3} sx={{ borderRadius: 2 }}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
                             <CardContent>
                                 <DataIngestion />
                             </CardContent>
@@ -374,13 +467,20 @@ function App() {
                                         mb: 2,
                                         borderRadius: 2,
                                         boxShadow: 1,
+                                        background: 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(10px)'
                                     }}
                                 >
                                     {error}
                                 </Alert>
                             )}
 
-                            <Card elevation={3} sx={{ mb: 3, borderRadius: 2 }}>
+                            <Card elevation={3} sx={{
+                                mb: 3,
+                                borderRadius: 2,
+                                background: 'rgba(255, 255, 255, 0.9)',
+                                backdropFilter: 'blur(10px)'
+                            }}>
                                 <CardContent>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
@@ -397,6 +497,9 @@ function App() {
                                                 sx={{
                                                     '& .MuiOutlinedInput-root': {
                                                         borderRadius: 2,
+                                                        '&:hover fieldset': {
+                                                            borderColor: theme.palette.primary.main,
+                                                        },
                                                     },
                                                 }}
                                             />
@@ -413,6 +516,11 @@ function App() {
                                                     borderRadius: 2,
                                                     textTransform: 'none',
                                                     fontSize: '1.1rem',
+                                                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                                    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
+                                                    }
                                                 }}
                                             >
                                                 {loading ? <CircularProgress size={24} /> : 'Analyze Text'}
@@ -431,9 +539,27 @@ function App() {
 
                 {activeTab === 2 && (
                     <Fade in={true} timeout={500}>
-                        <Card elevation={3} sx={{ borderRadius: 2 }}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
                             <CardContent>
                                 <ProcessModeling />
+                            </CardContent>
+                        </Card>
+                    </Fade>
+                )}
+
+                {activeTab === 3 && (
+                    <Fade in={true} timeout={500}>
+                        <Card elevation={3} sx={{
+                            borderRadius: 2,
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
+                            <CardContent>
+                                <TimeSeriesAnalysis />
                             </CardContent>
                         </Card>
                     </Fade>
