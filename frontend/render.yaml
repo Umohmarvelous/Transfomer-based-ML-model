@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: transformer-model-frontend
+    env: node
+    buildCommand: |
+      cd frontend
+      rm -rf node_modules package-lock.json
+      npm install
+      npm install react-scripts@5.0.1 --save
+      npm run build
+    startCommand: |
+      cd frontend
+      npx serve -s build -l $PORT
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://transformer-model-backend.onrender.com
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: PORT
+        value: 3000
+      - key: CI
+        value: false
+    healthCheckPath: /
+    autoDeploy: true 
