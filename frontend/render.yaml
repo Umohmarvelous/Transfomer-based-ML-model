@@ -6,7 +6,7 @@ services:
       npm install
       npm audit fix --force
       npm run build
-    startCommand: serve -s build
+    startCommand: npx serve -s build -l $PORT
     envVars:
       - key: REACT_APP_API_URL
         value: https://transformer-model-backend.onrender.com
