@@ -128,16 +128,174 @@ const DataIngestion = () => {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h4" gutterBottom sx={{
                 color: '#2c3e50',
                 fontWeight: 'bold',
-                mb: 4,
+                mb: { xs: 2, sm: 4 },
                 textAlign: 'center',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
             }}>
                 Data Ingestion
             </Typography>
+
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <Card elevation={3} sx={{
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Upload Data
+                            </Typography>
+                            <Box sx={{ mb: 3 }}>
+                                <input
+                                    accept=".csv,.json,.xls,.xlsx"
+                                    style={{ display: 'none' }}
+                                    id="file-upload"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                />
+                                <label htmlFor="file-upload">
+                                    <Button
+                                        variant="contained"
+                                        component="span"
+                                        fullWidth
+                                        sx={{
+                                            mb: 2,
+                                            py: { xs: 1, sm: 1.5 },
+                                            borderRadius: 2
+                                        }}
+                                    >
+                                        Choose File
+                                    </Button>
+                                </label>
+                                {file && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                        Selected: {file.name}
+                                    </Typography>
+                                )}
+                            </Box>
+
+                            <FormControl fullWidth sx={{ mb: 3 }}>
+                                <InputLabel>Data Type</InputLabel>
+                                <Select
+                                    value={dataType}
+                                    onChange={handleDataTypeChange}
+                                    label="Data Type"
+                                    sx={{ borderRadius: 2 }}
+                                >
+                                    <MenuItem value="csv">CSV</MenuItem>
+                                    <MenuItem value="json">JSON</MenuItem>
+                                    <MenuItem value="excel">Excel</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            <Typography variant="subtitle1" gutterBottom>
+                                Preprocessing Options
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={!!preprocessingSteps.handle_missing}
+                                            onChange={handlePreprocessingChange}
+                                            name="cleanMissing"
+                                        />
+                                    }
+                                    label="Handle Missing Values"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={!!preprocessingSteps.normalize}
+                                            onChange={handlePreprocessingChange}
+                                            name="normalize"
+                                        />
+                                    }
+                                    label="Normalize Data"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={preprocessingSteps.remove_duplicates}
+                                            onChange={handlePreprocessingChange}
+                                            name="removeDuplicates"
+                                        />
+                                    }
+                                    label="Remove Duplicates"
+                                />
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                    <Card elevation={3} sx={{
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Process Data
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleUpload}
+                                disabled={loading || !file}
+                                fullWidth
+                                sx={{
+                                    mt: 2,
+                                    py: { xs: 1, sm: 1.5 },
+                                    borderRadius: 2
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} /> : 'Process Data'}
+                            </Button>
+
+                            {summary && (
+                                <Box sx={{ mt: 3 }}>
+                                    <Typography variant="subtitle1" gutterBottom>
+                                        Data Summary
+                                    </Typography>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Rows
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                {summary.rows}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Columns
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                {summary.columns}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Memory Usage
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                {summary.memory_usage}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
 
             {/* Error Snackbar */}
             <Snackbar
@@ -146,6 +304,10 @@ const DataIngestion = () => {
                 onClose={handleCloseError}
                 TransitionComponent={SlideTransition}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{
+                    width: { xs: '100%', sm: 'auto' },
+                    maxWidth: { xs: '100%', sm: '400px' }
+                }}
             >
                 <Alert
                     onClose={handleCloseError}
@@ -154,18 +316,7 @@ const DataIngestion = () => {
                     sx={{
                         width: '100%',
                         borderRadius: 2,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        animation: 'slideIn 0.3s ease-out',
-                        '@keyframes slideIn': {
-                            '0%': {
-                                transform: 'translateY(-100%)',
-                                opacity: 0
-                            },
-                            '100%': {
-                                transform: 'translateY(0)',
-                                opacity: 1
-                            }
-                        }
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
                     }}
                 >
                     {error}
@@ -179,6 +330,10 @@ const DataIngestion = () => {
                 onClose={handleCloseSuccess}
                 TransitionComponent={FadeTransition}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{
+                    width: { xs: '100%', sm: 'auto' },
+                    maxWidth: { xs: '100%', sm: '400px' }
+                }}
             >
                 <Alert
                     onClose={handleCloseSuccess}
@@ -187,184 +342,12 @@ const DataIngestion = () => {
                     sx={{
                         width: '100%',
                         borderRadius: 2,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        animation: 'fadeIn 0.3s ease-out',
-                        '@keyframes fadeIn': {
-                            '0%': {
-                                opacity: 0,
-                                transform: 'scale(0.95)'
-                            },
-                            '100%': {
-                                opacity: 1,
-                                transform: 'scale(1)'
-                            }
-                        }
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
                     }}
                 >
                     {success}
                 </Alert>
             </Snackbar>
-
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Card elevation={3} sx={{
-                        borderRadius: 3,
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                        border: '1px solid rgba(0,0,0,0.1)'
-                    }}>
-                        <CardContent>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <FormControl fullWidth>
-                                        <InputLabel>Data Type</InputLabel>
-                                        <Select
-                                            value={dataType}
-                                            onChange={handleDataTypeChange}
-                                            label="Data Type"
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    borderRadius: 2,
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value="csv">CSV</MenuItem>
-                                            <MenuItem value="json">JSON</MenuItem>
-                                            <MenuItem value="xlsx">Excel</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Button
-                                        variant="contained"
-                                        component="label"
-                                        fullWidth
-                                        sx={{
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                            boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
-                                            },
-                                        }}
-                                    >
-                                        Select File
-                                        <input
-                                            type="file"
-                                            hidden
-                                            onChange={handleFileChange}
-                                            accept={`.${dataType}`}
-                                        />
-                                    </Button>
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <Typography variant="subtitle1" gutterBottom sx={{ color: '#34495e' }}>
-                                        Preprocessing Options
-                                    </Typography>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12} md={4}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Checkbox
-                                                        checked={preprocessingSteps.handle_missing !== undefined}
-                                                        onChange={handlePreprocessingChange}
-                                                        name="cleanMissing"
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label="Clean Missing Values"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={4}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Checkbox
-                                                        checked={preprocessingSteps.normalize !== undefined}
-                                                        onChange={handlePreprocessingChange}
-                                                        name="normalize"
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label="Normalize Data"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={4}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Checkbox
-                                                        checked={preprocessingSteps.remove_duplicates}
-                                                        onChange={handlePreprocessingChange}
-                                                        name="removeDuplicates"
-                                                    />
-                                                }
-                                                label="Remove Duplicates"
-                                            />
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleUpload}
-                                            disabled={loading || !file}
-                                            fullWidth
-                                            sx={{
-                                                py: 1.5,
-                                                borderRadius: 2,
-                                                background: 'linear-gradient(45deg, #4CAF50 30%, #45a049 90%)',
-                                                boxShadow: '0 3px 5px 2px rgba(76, 175, 80, .3)',
-                                                '&:hover': {
-                                                    background: 'linear-gradient(45deg, #388E3C 30%, #2E7D32 90%)',
-                                                },
-                                            }}
-                                        >
-                                            {loading ? <CircularProgress size={24} color="inherit" /> : 'Process Data'}
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-
-                                {summary && (
-                                    <Card elevation={2} sx={{ mt: 3, borderRadius: 2 }}>
-                                        <CardContent>
-                                            <Typography variant="h6" gutterBottom sx={{ color: '#34495e' }}>
-                                                Processing Summary
-                                            </Typography>
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12} md={6}>
-                                                    <Typography variant="subtitle2" color="text.secondary">
-                                                        Original Rows
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        {summary.original_rows}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <Typography variant="subtitle2" color="text.secondary">
-                                                        Processed Rows
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        {summary.processed_rows}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="subtitle2" color="text.secondary">
-                                                        Columns
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        {summary.columns.join(', ')}
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </CardContent>
-                                    </Card>
-                                )}
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
         </Box>
     );
 };

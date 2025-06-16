@@ -101,91 +101,165 @@ const TimeSeriesAnalysis = () => {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography variant="h4" gutterBottom sx={{
+                color: '#2c3e50',
+                fontWeight: 'bold',
+                mb: { xs: 2, sm: 4 },
+                textAlign: 'center',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+            }}>
                 Time Series Analysis
             </Typography>
 
-            <Card>
-                <CardContent>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={4}
-                                label="Time Series Data (JSON)"
-                                value={data}
-                                onChange={(e) => setData(e.target.value)}
-                                error={!!error}
-                                helperText={error}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                onClick={handleAnalyze}
-                                disabled={loading || !data}
-                                fullWidth
-                            >
-                                {loading ? <CircularProgress size={24} /> : 'Analyze'}
-                            </Button>
-                        </Grid>
-                    </Grid>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <Card elevation={3} sx={{
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Input Parameters
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Time Series Data"
+                                        multiline
+                                        rows={4}
+                                        variant="outlined"
+                                        value={data}
+                                        onChange={(e) => setData(e.target.value)}
+                                        sx={{ mb: 2 }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Window Size"
+                                        type="number"
+                                        value={windowSize}
+                                        onChange={(e) => setWindowSize(e.target.value)}
+                                        InputProps={{ inputProps: { min: 1 } }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Forecast Steps"
+                                        type="number"
+                                        value={forecastSteps}
+                                        onChange={(e) => setForecastSteps(e.target.value)}
+                                        InputProps={{ inputProps: { min: 1 } }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleAnalyze}
+                                        disabled={loading}
+                                        fullWidth
+                                        sx={{
+                                            mt: 2,
+                                            py: { xs: 1, sm: 1.5 },
+                                            borderRadius: 2
+                                        }}
+                                    >
+                                        {loading ? <CircularProgress size={24} /> : 'Analyze Time Series'}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                    {analysis && (
-                        <Box sx={{ mt: 3 }}>
+                <Grid item xs={12} md={6}>
+                    <Card elevation={3} sx={{
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <CardContent>
                             <Typography variant="h6" gutterBottom>
                                 Analysis Results
                             </Typography>
-                            
-                            {renderBottleneckGraph()}
+                            {analysis ? (
+                                <Box sx={{ height: '100%', minHeight: 300 }}>
+                                    {renderBottleneckGraph()}
+                                </Box>
+                            ) : (
+                                <Box sx={{
+                                    height: 300,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'background.default',
+                                    borderRadius: 2
+                                }}>
+                                    <Typography variant="body1" color="text.secondary">
+                                        No analysis results yet
+                                    </Typography>
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                            <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-                                Bottlenecks
-                            </Typography>
-                            <List>
-                                {analysis.bottlenecks.map((bottleneck, index) => (
-                                    <ListItem key={index}>
-                                        <ListItemText
-                                            primary={bottleneck.step}
-                                            secondary={`Impact: ${(bottleneck.impact * 100).toFixed(1)}%`}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-
-                            <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-                                Anomalies
-                            </Typography>
-                            <List>
-                                {analysis.anomalies.map((anomaly, index) => (
-                                    <ListItem key={index}>
-                                        <ListItemText
-                                            primary={anomaly.step}
-                                            secondary={anomaly.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-
-                            <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-                                Recommendations
-                            </Typography>
-                            <List>
-                                {analysis.recommendations.map((rec, index) => (
-                                    <ListItem key={index}>
-                                        <ListItemText
-                                            primary={rec.title}
-                                            secondary={rec.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                    )}
-                </CardContent>
-            </Card>
+                {analysis && (
+                    <Grid item xs={12}>
+                        <Card elevation={3} sx={{
+                            borderRadius: { xs: 2, sm: 3 },
+                            mt: 2
+                        }}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Statistical Summary
+                                </Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Mean
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {analysis.statistics.mean.toFixed(4)}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Standard Deviation
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {analysis.statistics.std.toFixed(4)}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Trend
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {analysis.statistics.trend}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Seasonality
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {analysis.statistics.seasonality ? 'Present' : 'Not Present'}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                )}
+            </Grid>
         </Box>
     );
 };

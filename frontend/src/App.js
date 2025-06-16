@@ -63,6 +63,16 @@ const theme = createTheme({
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
         h3: {
             fontWeight: 500,
+            fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+        },
+        h4: {
+            fontSize: 'clamp(1.2rem, 3vw, 2rem)',
+        },
+        h5: {
+            fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+        },
+        h6: {
+            fontSize: 'clamp(0.9rem, 2vw, 1.25rem)',
         },
     },
     components: {
@@ -70,8 +80,50 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     textTransform: 'none',
+                    padding: '8px 16px',
+                    '@media (max-width: 600px)': {
+                        padding: '6px 12px',
+                    },
                 },
             },
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    '@media (max-width: 600px)': {
+                        borderRadius: '8px',
+                    },
+                },
+            },
+        },
+        MuiContainer: {
+            styleOverrides: {
+                root: {
+                    '@media (max-width: 600px)': {
+                        padding: '16px',
+                    },
+                },
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    '@media (max-width: 600px)': {
+                        minWidth: 'auto',
+                        padding: '12px 8px',
+                        fontSize: '0.875rem',
+                    },
+                },
+            },
+        },
+    },
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920,
         },
     },
 });
@@ -87,7 +139,11 @@ function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box sx={{
+                    p: { xs: 2, sm: 3 },
+                    width: '100%',
+                    overflow: 'auto'
+                }}>
                     {children}
                 </Box>
             )}
@@ -390,36 +446,43 @@ function App() {
             <Box sx={{
                 minHeight: '100vh',
                 background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
-                py: 4
+                py: { xs: 2, sm: 4 }
             }}>
-                <Container maxWidth="lg">
+                <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
                     <Card elevation={3} sx={{
-                        borderRadius: 4,
+                        borderRadius: { xs: 2, sm: 4 },
                         background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
                     }}>
-                        <CardContent>
+                        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                             <Typography variant="h3" component="h1" gutterBottom sx={{
                                 textAlign: 'center',
                                 color: '#2c3e50',
                                 fontWeight: 'bold',
-                                mb: 4,
+                                mb: { xs: 2, sm: 4 },
                                 textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                             }}>
                                 Process Analysis Dashboard
                             </Typography>
 
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+                            <Box sx={{
+                                borderBottom: 1,
+                                borderColor: 'divider',
+                                mb: 3,
+                                overflowX: 'auto'
+                            }}>
                                 <Tabs
                                     value={value}
                                     onChange={handleChange}
-                                    centered
+                                    variant="scrollable"
+                                    scrollButtons="auto"
+                                    allowScrollButtonsMobile
                                     sx={{
                                         '& .MuiTab-root': {
-                                            fontSize: '1.1rem',
+                                            fontSize: { xs: '0.875rem', sm: '1.1rem' },
                                             fontWeight: 'medium',
                                             textTransform: 'none',
-                                            minWidth: 200,
+                                            minWidth: { xs: 'auto', sm: 200 },
                                             color: '#546e7a',
                                             '&.Mui-selected': {
                                                 color: '#1976d2',

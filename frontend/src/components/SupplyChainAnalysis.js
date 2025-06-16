@@ -249,11 +249,11 @@ const SupplyChainAnalysis = () => {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h4" gutterBottom sx={{
                 color: '#2c3e50',
                 fontWeight: 'bold',
-                mb: 4,
+                mb: { xs: 2, sm: 4 },
                 textAlign: 'center',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
             }}>
@@ -261,71 +261,146 @@ const SupplyChainAnalysis = () => {
             </Typography>
 
             <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                     <Card elevation={3} sx={{
-                        borderRadius: 3,
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                        border: '1px solid rgba(0,0,0,0.1)'
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
                     }}>
                         <CardContent>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
+                            <Typography variant="h6" gutterBottom>
+                                Upload Supply Chain Data
+                            </Typography>
+                            <Box sx={{ mb: 3 }}>
+                                <input
+                                    accept=".csv,.json,.xls,.xlsx"
+                                    style={{ display: 'none' }}
+                                    id="supply-chain-file-upload"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                />
+                                <label htmlFor="supply-chain-file-upload">
                                     <Button
                                         variant="contained"
-                                        component="label"
+                                        component="span"
                                         fullWidth
                                         sx={{
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                            boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
-                                            },
+                                            mb: 2,
+                                            py: { xs: 1, sm: 1.5 },
+                                            borderRadius: 2
                                         }}
                                     >
-                                        Select Supply Chain Data
-                                        <input
-                                            type="file"
-                                            hidden
-                                            onChange={handleFileChange}
-                                            accept=".csv,.json,.xlsx"
-                                        />
+                                        Choose File
                                     </Button>
-                                </Grid>
+                                </label>
+                                {file && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                        Selected: {file.name}
+                                    </Typography>
+                                )}
+                            </Box>
 
-                                <Grid item xs={12}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleAnalyze}
-                                        disabled={loading || !file}
-                                        fullWidth
-                                        sx={{
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            background: 'linear-gradient(45deg, #4CAF50 30%, #45a049 90%)',
-                                            boxShadow: '0 3px 5px 2px rgba(76, 175, 80, .3)',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #388E3C 30%, #2E7D32 90%)',
-                                            },
-                                        }}
-                                    >
-                                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Supply Chain'}
-                                    </Button>
-                                </Grid>
-                            </Grid>
-
-                            {error && (
-                                <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
-                                    {error}
-                                </Alert>
-                            )}
-
-                            {renderAnalysisResults()}
-                            {renderMonitoring()}
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleAnalyze}
+                                disabled={loading || !file}
+                                fullWidth
+                                sx={{
+                                    mt: 2,
+                                    py: { xs: 1, sm: 1.5 },
+                                    borderRadius: 2
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} /> : 'Analyze Supply Chain'}
+                            </Button>
                         </CardContent>
                     </Card>
                 </Grid>
+
+                <Grid item xs={12} md={6}>
+                    <Card elevation={3} sx={{
+                        borderRadius: { xs: 2, sm: 3 },
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Analysis Results
+                            </Typography>
+                            {error && (
+                                <Alert severity="error" sx={{ mb: 2 }}>
+                                    {error}
+                                </Alert>
+                            )}
+                            {analysis && (
+                                <Box sx={{ mt: 2 }}>
+                                    <TableContainer component={Paper} sx={{ maxHeight: 400, overflow: 'auto' }}>
+                                        <Table stickyHeader size="small">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Metric</TableCell>
+                                                    <TableCell align="right">Value</TableCell>
+                                                    <TableCell align="right">Status</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {Object.entries(analysis.metrics).map(([key, value]) => (
+                                                    <TableRow key={key}>
+                                                        <TableCell component="th" scope="row">
+                                                            {key}
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            {typeof value === 'number' ? value.toFixed(2) : value}
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            <Chip
+                                                                label={value > analysis.thresholds[key] ? 'Good' : 'Warning'}
+                                                                color={value > analysis.thresholds[key] ? 'success' : 'warning'}
+                                                                size="small"
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {monitoring && (
+                    <Grid item xs={12}>
+                        <Card elevation={3} sx={{
+                            borderRadius: { xs: 2, sm: 3 },
+                            mt: 2
+                        }}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Real-time Monitoring
+                                </Typography>
+                                <Grid container spacing={2}>
+                                    {Object.entries(monitoring).map(([key, value]) => (
+                                        <Grid item xs={12} sm={6} md={3} key={key}>
+                                            <Card variant="outlined" sx={{ p: 2 }}>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    {key}
+                                                </Typography>
+                                                <Typography variant="h6">
+                                                    {typeof value === 'number' ? value.toFixed(2) : value}
+                                                </Typography>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                )}
             </Grid>
         </Box>
     );
