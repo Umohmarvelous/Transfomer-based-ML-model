@@ -4,8 +4,11 @@ services:
     env: python
     buildCommand: |
       python -m pip install --upgrade pip
+      pip install gunicorn
       pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    startCommand: |
+      export PATH=$PATH:$HOME/.local/bin
+      gunicorn --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.18
