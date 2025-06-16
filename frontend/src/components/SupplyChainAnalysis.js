@@ -347,7 +347,7 @@ const SupplyChainAnalysis = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {Object.entries(analysis.metrics).map(([key, value]) => (
+                                                {analysis.metrics && Object.entries(analysis.metrics).map(([key, value]) => (
                                                     <TableRow key={key}>
                                                         <TableCell component="th" scope="row">
                                                             {key}
@@ -357,8 +357,8 @@ const SupplyChainAnalysis = () => {
                                                         </TableCell>
                                                         <TableCell align="right">
                                                             <Chip
-                                                                label={value > analysis.thresholds[key] ? 'Good' : 'Warning'}
-                                                                color={value > analysis.thresholds[key] ? 'success' : 'warning'}
+                                                                label={value > (analysis.thresholds?.[key] || 0) ? 'Good' : 'Warning'}
+                                                                color={value > (analysis.thresholds?.[key] || 0) ? 'success' : 'warning'}
                                                                 size="small"
                                                             />
                                                         </TableCell>
@@ -384,7 +384,7 @@ const SupplyChainAnalysis = () => {
                                     Real-time Monitoring
                                 </Typography>
                                 <Grid container spacing={2}>
-                                    {Object.entries(monitoring).map(([key, value]) => (
+                                    {monitoring && Object.entries(monitoring).map(([key, value]) => (
                                         <Grid item xs={12} sm={6} md={3} key={key}>
                                             <Card variant="outlined" sx={{ p: 2 }}>
                                                 <Typography variant="subtitle2" color="text.secondary">
