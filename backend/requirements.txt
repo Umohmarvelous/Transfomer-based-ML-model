@@ -8,5 +8,5 @@ torch==2.0.1+cpu
 transformers==4.31.0
 python-dotenv==1.0.0
 gunicorn==21.2.0
-setuptools>=65.5.1
-wheel>=0.40.0 
+setuptools==65.5.1
+wheel==0.38.4 
