@@ -22,9 +22,6 @@ app = Flask(__name__)
 # Configure CORS to allow requests from any localhost port
 CORS(app, resources={r"/api/*": {"origins": [
     "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://localhost:3003",
     os.getenv('FRONTEND_URL', 'http://localhost:3000')
 ]}})
 
