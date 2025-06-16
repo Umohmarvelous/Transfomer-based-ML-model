@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: transformer-model-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: serve -s build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://transformer-model-backend.onrender.com
+      - key: NODE_VERSION
+        value: 18.17.0 
