@@ -30,10 +30,8 @@ import {
     Filler,
 } from 'chart.js';
 import axios from 'axios';
-import ProcessModeling from './components/ProcessModeling';
-import DataIngestion from './components/DataIngestion';
 import TimeSeriesAnalysis from './components/TimeSeriesAnalysis';
-import SupplyChainAnalysis from './components/SupplyChainAnalysis';
+import GoodsManagement from './components/GoodsManagement';
 
 ChartJS.register(
     CategoryScale,
@@ -469,14 +467,15 @@ function App() {
                                 borderBottom: 1,
                                 borderColor: 'divider',
                                 mb: 3,
-                                overflowX: 'auto'
+                                overflowX: 'auto',
+                                display: 'flex',
+                                justifyContent: 'center'
                             }}>
                                 <Tabs
                                     value={value}
                                     onChange={handleChange}
-                                    variant="scrollable"
-                                    scrollButtons="auto"
-                                    allowScrollButtonsMobile
+                                    variant="standard"
+                                    centered
                                     sx={{
                                         '& .MuiTab-root': {
                                             fontSize: { xs: '0.875rem', sm: '1.1rem' },
@@ -494,31 +493,19 @@ function App() {
                                             height: 3,
                                             borderRadius: '3px 3px 0 0',
                                         },
+                                        '& .MuiTabs-flexContainer': {
+                                            justifyContent: 'center',
+                                            gap: 2
+                                        }
                                     }}
                                 >
-                                    <Tab label="Data Ingestion" />
                                     <Tab label="Text Analysis" />
-                                    <Tab label="Process Modeling" />
                                     <Tab label="Time Series Analysis" />
-                                    <Tab label="Supply Chain Analysis" />
+                                    <Tab label="Goods Management" />
                                 </Tabs>
                             </Box>
 
                             <TabPanel value={value} index={0}>
-                                <Fade in={true} timeout={500}>
-                                    <Card elevation={3} sx={{
-                                        borderRadius: 3,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                                        border: '1px solid rgba(0,0,0,0.1)'
-                                    }}>
-                                        <CardContent>
-                                            <DataIngestion />
-                                        </CardContent>
-                                    </Card>
-                                </Fade>
-                            </TabPanel>
-
-                            <TabPanel value={value} index={1}>
                                 <Fade in={true} timeout={500}>
                                     <Box>
                                         {error && (
@@ -595,21 +582,7 @@ function App() {
                                 </Fade>
                             </TabPanel>
 
-                            <TabPanel value={value} index={2}>
-                                <Fade in={true} timeout={500}>
-                                    <Card elevation={3} sx={{
-                                        borderRadius: 3,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                                        border: '1px solid rgba(0,0,0,0.1)'
-                                    }}>
-                                        <CardContent>
-                                            <ProcessModeling />
-                                        </CardContent>
-                                    </Card>
-                                </Fade>
-                            </TabPanel>
-
-                            <TabPanel value={value} index={3}>
+                            <TabPanel value={value} index={1}>
                                 <Fade in={true} timeout={500}>
                                     <Card elevation={3} sx={{
                                         borderRadius: 3,
@@ -623,7 +596,7 @@ function App() {
                                 </Fade>
                             </TabPanel>
 
-                            <TabPanel value={value} index={4}>
+                            <TabPanel value={value} index={2}>
                                 <Fade in={true} timeout={500}>
                                     <Card elevation={3} sx={{
                                         borderRadius: 3,
@@ -631,7 +604,7 @@ function App() {
                                         border: '1px solid rgba(0,0,0,0.1)'
                                     }}>
                                         <CardContent>
-                                            <SupplyChainAnalysis />
+                                            <GoodsManagement />
                                         </CardContent>
                                     </Card>
                                 </Fade>

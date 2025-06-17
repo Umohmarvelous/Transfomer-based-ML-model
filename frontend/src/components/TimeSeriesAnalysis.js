@@ -8,9 +8,6 @@ import {
     TextField,
     Button,
     CircularProgress,
-    List,
-    ListItem,
-    ListItemText,
 } from '@mui/material';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -39,13 +36,17 @@ const TimeSeriesAnalysis = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [analysis, setAnalysis] = useState(null);
+    const [windowSize, setWindowSize] = useState(5);
+    const [forecastSteps, setForecastSteps] = useState(3);
 
     const handleAnalyze = async () => {
         try {
             setLoading(true);
             setError('');
             const response = await axios.post('http://localhost:5000/api/analyze-timeseries', {
-                data: JSON.parse(data)
+                data: JSON.parse(data),
+                windowSize: windowSize,
+                forecastSteps: forecastSteps
             });
             setAnalysis(response.data);
         } catch (err) {
@@ -135,6 +136,8 @@ const TimeSeriesAnalysis = () => {
                                         value={data}
                                         onChange={(e) => setData(e.target.value)}
                                         sx={{ mb: 2 }}
+                                        error={!!error}
+                                        helperText={error}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -143,7 +146,7 @@ const TimeSeriesAnalysis = () => {
                                         label="Window Size"
                                         type="number"
                                         value={windowSize}
-                                        onChange={(e) => setWindowSize(e.target.value)}
+                                        onChange={(e) => setWindowSize(Number(e.target.value))}
                                         InputProps={{ inputProps: { min: 1 } }}
                                     />
                                 </Grid>
@@ -153,7 +156,7 @@ const TimeSeriesAnalysis = () => {
                                         label="Forecast Steps"
                                         type="number"
                                         value={forecastSteps}
-                                        onChange={(e) => setForecastSteps(e.target.value)}
+                                        onChange={(e) => setForecastSteps(Number(e.target.value))}
                                         InputProps={{ inputProps: { min: 1 } }}
                                     />
                                 </Grid>
@@ -211,7 +214,7 @@ const TimeSeriesAnalysis = () => {
                     </Card>
                 </Grid>
 
-                {analysis && (
+                {analysis && analysis.statistics && (
                     <Grid item xs={12}>
                         <Card elevation={3} sx={{
                             borderRadius: { xs: 2, sm: 3 },
@@ -227,7 +230,7 @@ const TimeSeriesAnalysis = () => {
                                             Mean
                                         </Typography>
                                         <Typography variant="body1">
-                                            {analysis.statistics.mean.toFixed(4)}
+                                            {analysis.statistics.mean?.toFixed(4) || 'N/A'}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={3}>
@@ -235,7 +238,7 @@ const TimeSeriesAnalysis = () => {
                                             Standard Deviation
                                         </Typography>
                                         <Typography variant="body1">
-                                            {analysis.statistics.std.toFixed(4)}
+                                            {analysis.statistics.std?.toFixed(4) || 'N/A'}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={3}>
@@ -243,7 +246,7 @@ const TimeSeriesAnalysis = () => {
                                             Trend
                                         </Typography>
                                         <Typography variant="body1">
-                                            {analysis.statistics.trend}
+                                            {analysis.statistics.trend || 'N/A'}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={3}>
@@ -251,7 +254,9 @@ const TimeSeriesAnalysis = () => {
                                             Seasonality
                                         </Typography>
                                         <Typography variant="body1">
-                                            {analysis.statistics.seasonality ? 'Present' : 'Not Present'}
+                                            {analysis.statistics.seasonality !== undefined ?
+                                                (analysis.statistics.seasonality ? 'Present' : 'Not Present') :
+                                                'N/A'}
                                         </Typography>
                                     </Grid>
                                 </Grid>
