@@ -39,11 +39,17 @@ yarn-error.log*
 *.swo
 
 # Project specific
-backend/uploads/
 clean/
+backend/uploads/
 *.log
 
 # OS
 .DS_Store
 Thumbs.db 
 .vercel
+
+frontend/package.json/
+
+package-lock.json
+
+backend/pyproject.toml/

@@ -13,10 +13,18 @@ import {
     Card,
     CardContent,
     Fade,
-    ThemeProvider,
-    CssBaseline,
-    createTheme
+    // ThemeProvider,
+    // CssBaseline,
+    createTheme,
+    IconButton,
+    Snackbar,
+    Paper
 } from '@mui/material';
+import {
+    DarkMode as DarkModeIcon,
+    LightMode as LightModeIcon,
+    AttachMoney as MoneyIcon
+} from '@mui/icons-material'
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -98,7 +106,7 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     '@media (max-width: 600px)': {
-                        padding: '16px',
+                        padding: '0px',
                     },
                 },
             },
@@ -108,7 +116,6 @@ const theme = createTheme({
                 root: {
                     '@media (max-width: 600px)': {
                         minWidth: 'auto',
-                        padding: '12px 8px',
                         fontSize: '0.875rem',
                     },
                 },
@@ -124,9 +131,11 @@ const theme = createTheme({
             xl: 1920,
         },
     },
+
 });
 
 function TabPanel(props) {
+
     const { children, value, index, ...other } = props;
     return (
         <div
@@ -150,11 +159,24 @@ function TabPanel(props) {
 }
 
 function App() {
+    const [darkMode, setDarkMode] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
     const [error, setError] = useState('');
     const [value, setValue] = useState(0);
+
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+        showSnackbar(`${darkMode ? 'Light' : 'Dark'} mode activated`, 'info');
+    };
+
+
+    const showSnackbar = (message, severity) => {
+        setSnackbar({ open: true, message, severity });
+    };
 
     const analyzeText = async () => {
         if (!text.trim()) {
@@ -439,181 +461,200 @@ function App() {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Box sx={{
-                minHeight: '100vh',
-                background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
-                py: { xs: 2, sm: 4 }
-            }}>
-                <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-                    <Card elevation={3} sx={{
-                        borderRadius: { xs: 2, sm: 4 },
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+
+        <Box sx={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg,rgb(78, 79, 81) 0%, #e4e8eb 100%)',
+            bgcolor: darkMode ? 'background.paper' : 'background.default',
+            transition: 'all 0.3s ease-in-out',
+            paddingTop:'40px'
+        }}>
+
+            {/* <Container maxWidth="xl"
+                sx={{ pt: '40px',
+                    pl: '0px',
+                    pr: '0px',
+                    padding: '0px',
+                    // background: darkMode ? 'background.paper' : 'background.default',
+                }}> */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignItems: 'self-start',
+                }}>
+                    <Typography variant="h3" component="h1" gutterBottom sx={{
+                        textAlign: 'center',
+                        color: '#2c3e50',
+                        fontWeight: 'bold',
+                        mb: { xs: 2, sm: 4 },
+                        mT: { xs: 2, sm: 4 },
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                     }}>
-                        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                            <Typography variant="h3" component="h1" gutterBottom sx={{
-                                textAlign: 'center',
-                                color: '#2c3e50',
-                                fontWeight: 'bold',
-                                mb: { xs: 2, sm: 4 },
-                                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
-                            }}>
-                                Process Analysis Dashboard
-                            </Typography>
-
-                            <Box sx={{
-                                borderBottom: 1,
-                                borderColor: 'divider',
-                                mb: 3,
-                                overflowX: 'auto',
-                                display: 'flex',
-                                justifyContent: 'center'
-                            }}>
-                                <Tabs
-                                    value={value}
-                                    onChange={handleChange}
-                                    variant="standard"
-                                    centered
-                                    sx={{
-                                        '& .MuiTab-root': {
-                                            fontSize: { xs: '0.875rem', sm: '1.1rem' },
-                                            fontWeight: 'medium',
-                                            textTransform: 'none',
-                                            minWidth: { xs: 'auto', sm: 200 },
-                                            color: '#546e7a',
-                                            '&.Mui-selected': {
-                                                color: '#1976d2',
-                                                fontWeight: 'bold',
-                                            },
+                        Process Analysis Dashboard
+                    </Typography>
+                    <IconButton onClick={toggleDarkMode} color="primary"
+                        sx={{ marginLeft: '130px' }}
+                    >
+                        {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+                    </IconButton>
+                </Box>
+                
+                        <Box sx={{
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            mb: 3,
+                            overflowX: 'auto',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                variant="standard"
+                                centered
+                                sx={{
+                                    '& .MuiTab-root': {
+                                        fontSize: { xs: '0.875rem', sm: '1.1rem' },
+                                        fontWeight: 'medium',
+                                        textTransform: 'none',
+                                        minWidth: { xs: 'auto', sm: 200 },
+                                        color: '#546e7a',
+                                        '&.Mui-selected': {
+                                            color: '#1976d2',
+                                            fontWeight: 'bold',
                                         },
-                                        '& .MuiTabs-indicator': {
-                                            backgroundColor: '#1976d2',
-                                            height: 3,
-                                            borderRadius: '3px 3px 0 0',
-                                        },
-                                        '& .MuiTabs-flexContainer': {
-                                            justifyContent: 'center',
-                                            gap: 2
-                                        }
-                                    }}
-                                >
-                                    <Tab label="Text Analysis" />
-                                    <Tab label="Time Series Analysis" />
-                                    <Tab label="Goods Management" />
-                                </Tabs>
-                            </Box>
+                                    },
+                                    '& .MuiTabs-indicator': {
+                                        backgroundColor: '#1976d2',
+                                        height: 3,
+                                        borderRadius: '3px 3px 0 0',
+                                    },
+                                    '& .MuiTabs-flexContainer': {
+                                        justifyContent: 'center',
+                                        gap: 2
+                                    }
+                                }}
+                            >
+                                <Tab label="Text Analysis" />
+                                <Tab label="Time Series Analysis" />
+                                <Tab label="Goods Management" />
+                            </Tabs>
+                        </Box>
 
-                            <TabPanel value={value} index={0}>
-                                <Fade in={true} timeout={500}>
-                                    <Box>
-                                        {error && (
-                                            <Alert
-                                                severity="error"
-                                                sx={{
-                                                    mb: 2,
-                                                    borderRadius: 2,
-                                                    boxShadow: 1,
-                                                }}
-                                            >
-                                                {error}
-                                            </Alert>
-                                        )}
+                        <TabPanel value={value} index={0} >
+                            <Fade in={true} timeout={500}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexDirection: 'column'
+                                }}>
+                                    {error && (
+                                        <Alert
+                                            severity="error"
+                                            sx={{
+                                                mb: 2,
+                                                borderRadius: 2,
+                                                boxShadow: 1,
+                                            }}
+                                        >
+                                            {error}
+                                        </Alert>
+                                    )}
 
-                                        <Card elevation={3} sx={{
-                                            mb: 3,
-                                            borderRadius: 3,
-                                            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                                            border: '1px solid rgba(0,0,0,0.1)'
-                                        }}>
-                                            <CardContent>
-                                                <Grid container spacing={2}>
-                                                    <Grid item xs={12}>
-                                                        <TextField
-                                                            fullWidth
-                                                            multiline
-                                                            rows={4}
-                                                            variant="outlined"
-                                                            label="Enter text to analyze"
-                                                            value={text}
-                                                            onChange={(e) => setText(e.target.value)}
-                                                            error={!!error}
-                                                            helperText={error}
-                                                            sx={{
-                                                                '& .MuiOutlinedInput-root': {
-                                                                    borderRadius: 2,
-                                                                    backgroundColor: 'rgba(255,255,255,0.9)',
-                                                                    '&:hover': {
-                                                                        backgroundColor: 'rgba(255,255,255,1)',
-                                                                    },
-                                                                },
-                                                            }}
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={12}>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={analyzeText}
-                                                            disabled={loading}
-                                                            fullWidth
-                                                            sx={{
-                                                                py: 1.5,
+                                    <Card elevation={3} sx={{
+                                        mb: 3,
+                                        width: '50%',
+                                        borderRadius: 3,
+                                        background: 'linear-gradient(145deg,rgb(118, 54, 54) 0%,rgb(112, 131, 151) 100%)',
+                                    }}>
+                                        <CardContent>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        fullWidth
+                                                        multiline
+                                                        rows={4}
+                                                        variant="outlined"
+                                                        label="Enter text to analyze"
+                                                        value={text}
+                                                        onChange={(e) => setText(e.target.value)}
+                                                        error={!!error}
+                                                        helperText={error}
+                                                        sx={{
+                                                            color: 'black',
+                                                            '& .MuiOutlinedInput-root': {
                                                                 borderRadius: 2,
-                                                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                                                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                                                backgroundColor: 'rgba(255,255,255,0.9)',
                                                                 '&:hover': {
-                                                                    background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
+                                                                    backgroundColor: 'rgba(255,255,255,1)',
                                                                 },
-                                                            }}
-                                                        >
-                                                            {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Text'}
-                                                        </Button>
-                                                    </Grid>
+                                                            },
+                                                        }}
+                                                    />
                                                 </Grid>
-                                            </CardContent>
-                                        </Card>
-
-                                        {results && (
-                                            <AnalysisResults results={results} />
-                                        )}
-                                    </Box>
-                                </Fade>
-                            </TabPanel>
-
-                            <TabPanel value={value} index={1}>
-                                <Fade in={true} timeout={500}>
-                                    <Card elevation={3} sx={{
-                                        borderRadius: 3,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                                        border: '1px solid rgba(0,0,0,0.1)'
-                                    }}>
-                                        <CardContent>
-                                            <TimeSeriesAnalysis />
+                                                <Grid item xs={12}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={analyzeText}
+                                                        disabled={loading}
+                                                        fullWidth
+                                                        sx={{
+                                                            py: 1.5,
+                                                            borderRadius: 2,
+                                                            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                                            boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                                            '&:hover': {
+                                                                background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Text'}
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
                                         </CardContent>
                                     </Card>
-                                </Fade>
-                            </TabPanel>
 
-                            <TabPanel value={value} index={2}>
-                                <Fade in={true} timeout={500}>
-                                    <Card elevation={3} sx={{
-                                        borderRadius: 3,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
-                                        border: '1px solid rgba(0,0,0,0.1)'
-                                    }}>
-                                        <CardContent>
-                                            <GoodsManagement />
+                                    {results && (
+                                        <AnalysisResults results={results} />
+                                    )}
+                                </Box>
+                            </Fade>
+                        </TabPanel>
+
+                        <TabPanel value={value} index={1}>
+                            <Fade in={true} timeout={500}>
+                                <Card elevation={3} sx={{
+                                    borderRadius: 3,
+                                    // background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+                                    // border: '1px solid rgba(0,0,0,0.1)'
+                                }}>
+                                    <CardContent>
+                                        <TimeSeriesAnalysis />
+                                    </CardContent>
+                                </Card>
+                            </Fade>
+                        </TabPanel>
+
+                        <TabPanel value={value} index={2}>
+                            <Fade in={true} timeout={500}>
+                                <Card elevation={0} sx={{
+                                    borderRadius: 4,
+                                    // background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+                                }}>                                        <CardContent>
+
+                                        <GoodsManagement />
                                         </CardContent>
-                                    </Card>
-                                </Fade>
-                            </TabPanel>
-                        </CardContent>
-                    </Card>
-                </Container>
-            </Box>
-        </ThemeProvider>
+                                </Card>
+                            </Fade>
+                        </TabPanel>
+            {/* </Container> */}
+        </Box>
+        // </ThemeProvider>
     );
 }
 

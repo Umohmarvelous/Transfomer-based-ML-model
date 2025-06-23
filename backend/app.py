@@ -76,7 +76,7 @@ def get_embeddings(text):
     
     try:
         # Tokenize and get model outputs
-        inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
             outputs = model(**inputs)
         
@@ -401,7 +401,7 @@ def analyze_timeseries(data):
     except Exception as e:
         logger.error(f"Error in time series analysis: {str(e)}")
         raise ValueError(str(e))
-
+ 
 @app.route('/api/analyze-timeseries', methods=['POST'])
 def analyze_timeseries_endpoint():
     try:
@@ -415,7 +415,7 @@ def analyze_timeseries_endpoint():
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
+        
 # Initialize the model when the server starts
 initialize_model()
 
